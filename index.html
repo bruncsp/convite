@@ -7,6 +7,7 @@
     * {
       box-sizing: border-box;
     }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #282c34, #3a3f55);
@@ -26,14 +27,12 @@
       font-size: 2.5rem;
       margin-bottom: 10px;
       color: #ff6f91;
-      text-shadow: none;
     }
 
     p {
       font-size: 1.4rem;
       margin: 5px 0 20px 0;
       color: #f0e9ff;
-      text-shadow: none;
     }
 
     #inicio button,
@@ -53,6 +52,7 @@
       background-color: #ff4f81;
       color: white;
     }
+
     #verBtn:hover {
       background-color: #e8436f;
     }
@@ -71,6 +71,7 @@
       color: white;
       min-width: 120px;
     }
+
     #yes:hover {
       background-color: #3a9d41;
     }
@@ -93,17 +94,39 @@
       color: #ffaaaa;
       font-weight: bold;
       font-family: 'Segoe UI Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-shadow: none;
     }
 
-    .despedida {
-      animation: girarDesaparecer 1.2s ease forwards;
-    }
+    /* Responsividade */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+      }
 
-    @keyframes girarDesaparecer {
-      0% { transform: scale(1) rotate(0deg); opacity: 1; }
-      50% { transform: scale(1.2) rotate(180deg); }
-      100% { transform: scale(0) rotate(360deg); opacity: 0; }
+      p {
+        font-size: 1.2rem;
+      }
+
+      #inicio button,
+      #convite button {
+        font-size: 1.1rem;
+        padding: 12px 24px;
+      }
+
+      #buttons {
+        flex-direction: column;
+        gap: 20px;
+        width: auto;
+      }
+
+      #no, #yes {
+        min-width: unset;
+        width: 80%;
+        max-width: 300px;
+      }
+
+      #no {
+        transform: translate(-50%, -50%);
+      }
     }
   </style>
 </head>
@@ -120,7 +143,7 @@
     <p>Aceita jantar comigo? ❤️</p>
 
     <div id="buttons">
-      <button id="yes" onclick="aceitou()">Sim 🥰</button>
+      <button id="yes" onclick="clicouSim()">Sim 🥰</button>
       <button id="no" onmouseenter="moveButton(event)">Não 😢</button>
     </div>
 
@@ -150,12 +173,15 @@
       "Não briga comigo, não! 🥺"
     ];
 
+    let mexeuNoNao = false;
+
     function mostrarConvite() {
       inicioDiv.style.display = 'none';
       conviteDiv.style.display = 'block';
+      tentativas = 0;
+      mexeuNoNao = false;
       positionNoBtnAtRest();
       msgFuga.textContent = '';
-      tentativas = 0;
     }
 
     function positionNoBtnAtRest() {
@@ -166,6 +192,7 @@
     }
 
     function moveButton(event) {
+      mexeuNoNao = true;
       tentativas++;
       msgFuga.textContent = frases[tentativas % frases.length];
 
@@ -179,8 +206,8 @@
       const yesRect = yesBtn.getBoundingClientRect();
 
       let newX, newY;
-      let tentativasInternas = 0;
-      const maxTentativas = 100;
+      let tries = 0;
+      const maxTries = 100;
 
       function colideSim(x, y) {
         return !(
@@ -192,64 +219,84 @@
       }
 
       do {
-        newX = Math.random() * (windowWidth - btnWidth - padding*2) + padding;
-        newY = Math.random() * (windowHeight - btnHeight - padding*2) + padding;
-        const distanciaX = Math.abs(newX - mouseX);
-        const distanciaY = Math.abs(newY - mouseY);
-        tentativasInternas++;
+        newX = Math.random() * (windowWidth - btnWidth - padding * 2) + padding;
+        newY = Math.random() * (windowHeight - btnHeight - padding * 2) + padding;
 
-        if (
-          !colideSim(newX, newY) &&
-          distanciaX > 150 &&
-          distanciaY > 100
-        ) break;
-      } while (tentativasInternas < maxTentativas);
+        const distX = Math.abs(newX - mouseX);
+        const distY = Math.abs(newY - mouseY);
+        tries++;
+
+        if (!colideSim(newX, newY) && distX > 150 && distY > 100) break;
+      } while (tries < maxTries);
 
       noBtn.style.left = `${newX}px`;
       noBtn.style.top = `${newY}px`;
     }
 
+    function clicouSim() {
+      if (!mexeuNoNao) {
+        msgFuga.textContent = 'Ei! O botão "Não" também queria brincar! 😅';
+
+        noBtn.animate([
+          { transform: 'translate(0,0)' },
+          { transform: 'translate(0, -25px)' },
+          { transform: 'translate(0, 0)' },
+          { transform: 'translate(0, -10px)' },
+          { transform: 'translate(0, 0)' }
+        ], {
+          duration: 600,
+          easing: 'ease-out',
+        });
+
+        setTimeout(() => {
+          moveButton({
+            clientX: yesBtn.getBoundingClientRect().left,
+            clientY: yesBtn.getBoundingClientRect().top
+          });
+          aceitou();
+        }, 700);
+      } else {
+        aceitou();
+      }
+    }
+
     function aceitou() {
-      // Efeito no botão "Não"
-      noBtn.classList.add('despedida');
+      document.body.innerHTML = `
+        <div style="text-align:center; padding: 40px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #ff4f81;">
+          <h1 style="font-size: 2.5rem;">Você disse SIM! 🥳😍</h1>
+          <p style="font-size: 1.3rem; margin-top: 20px;">Parabéns pela excelente escolha! 😎</p>
+          <p style="font-size: 1.2rem;">Já estou preparando um jantar inesquecível para nós... 🍝🍷</p>
+          <p style="font-size: 1.2rem;">Mal posso esperar para te ver! 💖</p>
+        </div>
+      `;
 
-      // Disparar confete em ondas
-      const duration = 3000;
+      // Explosão de confete contínua por 2 segundos
+      const duration = 2 * 1000;
       const animationEnd = Date.now() + duration;
-      const colors = ['#ff4f81', '#ff6f91', '#f67e7d', '#f2a365', '#ffcc00'];
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
-      const interval = setInterval(function() {
+      function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      const interval = setInterval(() => {
         const timeLeft = animationEnd - Date.now();
 
         if (timeLeft <= 0) {
-          clearInterval(interval);
-          mostrarFinal();
-          return;
+          return clearInterval(interval);
         }
 
+        const particleCount = 50 * (timeLeft / duration);
         confetti({
-          particleCount: 15,
-          startVelocity: 30,
-          spread: 360,
-          ticks: 60,
+          ...defaults,
+          particleCount,
           origin: {
-            x: Math.random(),
-            y: Math.random() - 0.2
+            x: randomInRange(0.1, 0.9),
+            y: randomInRange(0.1, 0.4)
           },
-          colors: colors
+          colors: ['#ff4f81', '#ff6f91', '#f67e7d', '#f2a365', '#ffcc00']
         });
-      }, 200);
-    }
-
-    function mostrarFinal() {
-      document.body.innerHTML = `
-        <div style="text-align:center; padding: 40px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #ff4f81;">
-          <h1 style="font-size: 3rem;">Você disse SIM! 🥳😍</h1>
-          <p style="font-size: 1.5rem; margin-top: 20px;">Parabéns pela excelente escolha! 😎</p>
-          <p style="font-size: 1.3rem;">Já estou preparando um jantar inesquecível para nós... 🍝🍷</p>
-          <p style="font-size: 1.3rem;">Mal posso esperar para te ver! 💖</p>
-        </div>
-      `;
+      }, 250);
     }
   </script>
 </body>

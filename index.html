@@ -1,73 +1,254 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Quer namorar comigo?</title>
+  <meta charset="UTF-8" />
+  <title>Convite Especial</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 100px;
-      background-color: #ffe6f0;
-      overflow: hidden;
+    * {
+      box-sizing: border-box;
     }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #282c34, #3a3f55);
+      color: #fff;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      overflow: hidden;
+      text-align: center;
+      padding: 20px;
+    }
+
     h1 {
       font-size: 2.5rem;
-      color: #ff3366;
+      margin-bottom: 10px;
+      color: #ff6f91;
+      text-shadow: none;
     }
-    #buttons {
-      margin-top: 50px;
-      position: relative;
-      height: 200px;
+
+    p {
+      font-size: 1.4rem;
+      margin: 5px 0 20px 0;
+      color: #f0e9ff;
+      text-shadow: none;
     }
-    button {
-      font-size: 1.5rem;
-      padding: 10px 20px;
-      margin: 20px;
-      cursor: pointer;
+
+    #inicio button,
+    #convite button {
+      padding: 12px 30px;
+      font-size: 1.3rem;
       border: none;
-      border-radius: 8px;
-      transition: 0.3s;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      user-select: none;
+      white-space: nowrap;
+      transition: background-color 0.3s ease;
     }
+
+    #verBtn {
+      background-color: #ff4f81;
+      color: white;
+    }
+    #verBtn:hover {
+      background-color: #e8436f;
+    }
+
+    #buttons {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      position: relative;
+      width: 320px;
+      margin-top: 15px;
+    }
+
     #yes {
-      background-color: #66ff99;
+      background-color: #4caf50;
+      color: white;
+      min-width: 120px;
     }
+    #yes:hover {
+      background-color: #3a9d41;
+    }
+
     #no {
-      background-color: #ff6666;
-      position: absolute;
+      background-color: #e53935;
+      color: white;
+      min-width: 120px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: none !important;
+    }
+
+    #msgFuga {
+      margin-top: 20px;
+      min-height: 24px;
+      font-size: 1rem;
+      color: #ffaaaa;
+      font-weight: bold;
+      font-family: 'Segoe UI Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-shadow: none;
+    }
+
+    .despedida {
+      animation: girarDesaparecer 1.2s ease forwards;
+    }
+
+    @keyframes girarDesaparecer {
+      0% { transform: scale(1) rotate(0deg); opacity: 1; }
+      50% { transform: scale(1.2) rotate(180deg); }
+      100% { transform: scale(0) rotate(360deg); opacity: 0; }
     }
   </style>
 </head>
 <body>
-  <h1>Quer namorar comigo? 💖</h1>
-  <div id="buttons">
-    <button id="yes" onclick="aceitou()">Sim 😍</button>
-    <button id="no">Não 😢</button>
+
+  <div id="inicio">
+    <h1>Oi minha loirinha 💖</h1>
+    <p>Tenho um convite especial pra você...</p>
+    <button id="verBtn" onclick="mostrarConvite()">Ver convite 💌</button>
   </div>
+
+  <div id="convite" style="display:none;">
+    <h1>Uma noite especial... 🌙</h1>
+    <p>Aceita jantar comigo? ❤️</p>
+
+    <div id="buttons">
+      <button id="yes" onclick="aceitou()">Sim 🥰</button>
+      <button id="no" onmouseenter="moveButton(event)">Não 😢</button>
+    </div>
+
+    <div id="msgFuga"></div>
+  </div>
+
+  <audio autoplay loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg" />
+    Seu navegador não suporta áudio.
+  </audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
     const noBtn = document.getElementById('no');
+    const yesBtn = document.getElementById('yes');
+    const msgFuga = document.getElementById('msgFuga');
+    const conviteDiv = document.getElementById('convite');
+    const inicioDiv = document.getElementById('inicio');
 
-    function moveButton() {
-      const x = Math.random() * (window.innerWidth - 100);
-      const y = Math.random() * (window.innerHeight - 100);
-      noBtn.style.left = `${x}px`;
-      noBtn.style.top = `${y}px`;
+    let tentativas = 0;
+    const frases = [
+      "Julinha, Julinha...",
+      "Tem certeza? 😜",
+      "Vai me negar assim?",
+      "Se clicar aí, fica sem jantar! 😂",
+      "Não briga comigo, não! 🥺"
+    ];
+
+    function mostrarConvite() {
+      inicioDiv.style.display = 'none';
+      conviteDiv.style.display = 'block';
+      positionNoBtnAtRest();
+      msgFuga.textContent = '';
+      tentativas = 0;
     }
 
-    // Faz o botão fugir com o mouse
-    noBtn.addEventListener('mouseover', moveButton);
+    function positionNoBtnAtRest() {
+      const yesRect = yesBtn.getBoundingClientRect();
+      noBtn.style.top = `${yesRect.top + window.scrollY}px`;
+      noBtn.style.left = `${yesRect.right + 20}px`;
+      noBtn.style.transform = 'translate(0, 0)';
+    }
 
-    // Faz o botão fugir ao toque (mobile)
-    noBtn.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      moveButton();
-    });
+    function moveButton(event) {
+      tentativas++;
+      msgFuga.textContent = frases[tentativas % frases.length];
+
+      const padding = 20;
+      const btnWidth = noBtn.offsetWidth;
+      const btnHeight = noBtn.offsetHeight;
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      const mouseX = event.clientX;
+      const mouseY = event.clientY;
+      const yesRect = yesBtn.getBoundingClientRect();
+
+      let newX, newY;
+      let tentativasInternas = 0;
+      const maxTentativas = 100;
+
+      function colideSim(x, y) {
+        return !(
+          x + btnWidth + 10 < yesRect.left ||
+          x > yesRect.right + 10 ||
+          y + btnHeight + 10 < yesRect.top ||
+          y > yesRect.bottom + 10
+        );
+      }
+
+      do {
+        newX = Math.random() * (windowWidth - btnWidth - padding*2) + padding;
+        newY = Math.random() * (windowHeight - btnHeight - padding*2) + padding;
+        const distanciaX = Math.abs(newX - mouseX);
+        const distanciaY = Math.abs(newY - mouseY);
+        tentativasInternas++;
+
+        if (
+          !colideSim(newX, newY) &&
+          distanciaX > 150 &&
+          distanciaY > 100
+        ) break;
+      } while (tentativasInternas < maxTentativas);
+
+      noBtn.style.left = `${newX}px`;
+      noBtn.style.top = `${newY}px`;
+    }
 
     function aceitou() {
+      // Efeito no botão "Não"
+      noBtn.classList.add('despedida');
+
+      // Disparar confete em ondas
+      const duration = 3000;
+      const animationEnd = Date.now() + duration;
+      const colors = ['#ff4f81', '#ff6f91', '#f67e7d', '#f2a365', '#ffcc00'];
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          mostrarFinal();
+          return;
+        }
+
+        confetti({
+          particleCount: 15,
+          startVelocity: 30,
+          spread: 360,
+          ticks: 60,
+          origin: {
+            x: Math.random(),
+            y: Math.random() - 0.2
+          },
+          colors: colors
+        });
+      }, 200);
+    }
+
+    function mostrarFinal() {
       document.body.innerHTML = `
-        <h1>Eu sabia! 💘 Agora somos um casal oficial 😍</h1>
-        <p style="font-size: 1.5rem;">Pode mandar o print pra todo mundo! 📸❤️</p>
+        <div style="text-align:center; padding: 40px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #ff4f81;">
+          <h1 style="font-size: 3rem;">Você disse SIM! 🥳😍</h1>
+          <p style="font-size: 1.5rem; margin-top: 20px;">Parabéns pela excelente escolha! 😎</p>
+          <p style="font-size: 1.3rem;">Já estou preparando um jantar inesquecível para nós... 🍝🍷</p>
+          <p style="font-size: 1.3rem;">Mal posso esperar para te ver! 💖</p>
+        </div>
       `;
     }
   </script>

@@ -7,7 +7,6 @@
     * {
       box-sizing: border-box;
     }
-
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #282c34, #3a3f55);
@@ -27,12 +26,14 @@
       font-size: 2.5rem;
       margin-bottom: 10px;
       color: #ff6f91;
+      text-shadow: none;
     }
 
     p {
       font-size: 1.4rem;
       margin: 5px 0 20px 0;
       color: #f0e9ff;
+      text-shadow: none;
     }
 
     #inicio button,
@@ -52,7 +53,6 @@
       background-color: #ff4f81;
       color: white;
     }
-
     #verBtn:hover {
       background-color: #e8436f;
     }
@@ -71,7 +71,6 @@
       color: white;
       min-width: 120px;
     }
-
     #yes:hover {
       background-color: #3a9d41;
     }
@@ -94,38 +93,53 @@
       color: #ffaaaa;
       font-weight: bold;
       font-family: 'Segoe UI Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-shadow: none;
     }
 
-    /* Responsividade */
+    .despedida {
+      animation: girarDesaparecer 1.2s ease forwards;
+    }
+
+    @keyframes girarDesaparecer {
+      0% { transform: scale(1) rotate(0deg); opacity: 1; }
+      50% { transform: scale(1.2) rotate(180deg); }
+      100% { transform: scale(0) rotate(360deg); opacity: 0; }
+    }
+
+    /* Responsividade para telas pequenas */
     @media (max-width: 480px) {
       h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
       }
 
       p {
-        font-size: 1.2rem;
+        font-size: 1.6rem;
       }
 
       #inicio button,
       #convite button {
-        font-size: 1.1rem;
-        padding: 12px 24px;
+        font-size: 1.5rem;
+        padding: 14px 28px;
       }
 
       #buttons {
         flex-direction: column;
         gap: 20px;
-        width: auto;
+        width: 100%;
       }
 
-      #no, #yes {
+      #yes, #no {
         min-width: unset;
-        width: 80%;
-        max-width: 300px;
+        width: 100%;
+        padding: 16px 0;
       }
 
-      #no {
-        transform: translate(-50%, -50%);
+      #msgFuga {
+        font-size: 1.1rem;
+      }
+
+      body {
+        padding: 40px 25px;
       }
     }
   </style>
@@ -143,7 +157,7 @@
     <p>Aceita jantar comigo? ❤️</p>
 
     <div id="buttons">
-      <button id="yes" onclick="clicouSim()">Sim 🥰</button>
+      <button id="yes" onclick="aceitou()">Sim 🥰</button>
       <button id="no" onmouseenter="moveButton(event)">Não 😢</button>
     </div>
 
@@ -168,135 +182,41 @@
     const frases = [
       "Julinha, Julinha...",
       "Tem certeza? 😜",
-      "Vai me negar assim?",
-      "Se clicar aí, fica sem jantar! 😂",
-      "Não briga comigo, não! 🥺"
+      "Ah não, pensa bem! 😅",
+      "Só um pouquinho? 😉",
+      "Vai que é tua! 😘"
     ];
-
-    let mexeuNoNao = false;
 
     function mostrarConvite() {
       inicioDiv.style.display = 'none';
       conviteDiv.style.display = 'block';
-      tentativas = 0;
-      mexeuNoNao = false;
-      positionNoBtnAtRest();
-      msgFuga.textContent = '';
-    }
-
-    function positionNoBtnAtRest() {
-      const yesRect = yesBtn.getBoundingClientRect();
-      noBtn.style.top = `${yesRect.top + window.scrollY}px`;
-      noBtn.style.left = `${yesRect.right + 20}px`;
-      noBtn.style.transform = 'translate(0, 0)';
-    }
-
-    function moveButton(event) {
-      mexeuNoNao = true;
-      tentativas++;
-      msgFuga.textContent = frases[tentativas % frases.length];
-
-      const padding = 20;
-      const btnWidth = noBtn.offsetWidth;
-      const btnHeight = noBtn.offsetHeight;
-      const windowWidth = window.innerWidth;
-      const windowHeight = window.innerHeight;
-      const mouseX = event.clientX;
-      const mouseY = event.clientY;
-      const yesRect = yesBtn.getBoundingClientRect();
-
-      let newX, newY;
-      let tries = 0;
-      const maxTries = 100;
-
-      function colideSim(x, y) {
-        return !(
-          x + btnWidth + 10 < yesRect.left ||
-          x > yesRect.right + 10 ||
-          y + btnHeight + 10 < yesRect.top ||
-          y > yesRect.bottom + 10
-        );
-      }
-
-      do {
-        newX = Math.random() * (windowWidth - btnWidth - padding * 2) + padding;
-        newY = Math.random() * (windowHeight - btnHeight - padding * 2) + padding;
-
-        const distX = Math.abs(newX - mouseX);
-        const distY = Math.abs(newY - mouseY);
-        tries++;
-
-        if (!colideSim(newX, newY) && distX > 150 && distY > 100) break;
-      } while (tries < maxTries);
-
-      noBtn.style.left = `${newX}px`;
-      noBtn.style.top = `${newY}px`;
-    }
-
-    function clicouSim() {
-      if (!mexeuNoNao) {
-        msgFuga.textContent = 'Ei! O botão "Não" também queria brincar! 😅';
-
-        noBtn.animate([
-          { transform: 'translate(0,0)' },
-          { transform: 'translate(0, -25px)' },
-          { transform: 'translate(0, 0)' },
-          { transform: 'translate(0, -10px)' },
-          { transform: 'translate(0, 0)' }
-        ], {
-          duration: 600,
-          easing: 'ease-out',
-        });
-
-        setTimeout(() => {
-          moveButton({
-            clientX: yesBtn.getBoundingClientRect().left,
-            clientY: yesBtn.getBoundingClientRect().top
-          });
-          aceitou();
-        }, 700);
-      } else {
-        aceitou();
-      }
     }
 
     function aceitou() {
-      document.body.innerHTML = `
-        <div style="text-align:center; padding: 40px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #ff4f81;">
-          <h1 style="font-size: 2.5rem;">Você disse SIM! 🥳😍</h1>
-          <p style="font-size: 1.3rem; margin-top: 20px;">Parabéns pela excelente escolha! 😎</p>
-          <p style="font-size: 1.2rem;">Já estou preparando um jantar inesquecível para nós... 🍝🍷</p>
-          <p style="font-size: 1.2rem;">Mal posso esperar para te ver! 💖</p>
-        </div>
+      conviteDiv.innerHTML = `
+        <h1>Você aceitou! 🥳</h1>
+        <p>Mal posso esperar por essa noite especial com você ❤️</p>
       `;
+      confetti({
+        particleCount: 200,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
 
-      // Explosão de confete contínua por 2 segundos
-      const duration = 2 * 1000;
-      const animationEnd = Date.now() + duration;
-      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-      function randomInRange(min, max) {
-        return Math.random() * (max - min) + min;
+    function moveButton(event) {
+      tentativas++;
+      if (tentativas <= frases.length) {
+        msgFuga.textContent = frases[tentativas - 1];
+      } else {
+        msgFuga.textContent = "Você não pode recusar! 😜";
       }
 
-      const interval = setInterval(() => {
-        const timeLeft = animationEnd - Date.now();
-
-        if (timeLeft <= 0) {
-          return clearInterval(interval);
-        }
-
-        const particleCount = 50 * (timeLeft / duration);
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: {
-            x: randomInRange(0.1, 0.9),
-            y: randomInRange(0.1, 0.4)
-          },
-          colors: ['#ff4f81', '#ff6f91', '#f67e7d', '#f2a365', '#ffcc00']
-        });
-      }, 250);
+      // Move o botão "Não" para uma posição aleatória dentro da viewport
+      const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+      const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+      noBtn.style.left = x + 'px';
+      noBtn.style.top = y + 'px';
     }
   </script>
 </body>

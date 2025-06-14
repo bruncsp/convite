@@ -1,223 +1,897 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Convite Especial</title>
+  <title>Com amor, loirinho..</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Crimson+Text&display=swap" rel="stylesheet" />
   <style>
-    * {
-      box-sizing: border-box;
+    /* (todo o CSS igual ao anterior) */
+    html, body, * { user-select: none !important; box-sizing: border-box; }
+    body, .romantic-container, #timelineOverlay {
+      background-color: #ffeeee !important;
+      background-image: none !important;
     }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #282c34, #3a3f55);
-      color: #fff;
-      height: 100vh;
+      min-height: 100vh;
+      width: 100vw;
       margin: 0;
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    body.no-scroll, html.no-scroll { overflow: hidden !important; height: 100vh !important; }
+    .envlope-wrapper, .romantic-container { margin: 0 auto; }
+    .envlope-wrapper {
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      position: relative;
+      opacity: 0;
+      filter: blur(18px);
+      transform: scale(0.97);
+      transition: opacity 0.7s cubic-bezier(.4,0,.2,1), filter 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    .envlope-wrapper.initial-entry {
+      opacity: 1;
+      filter: blur(0);
+      transform: scale(1);
+      animation: blurFadeIn 0.9s cubic-bezier(.4,0,.2,1);
+    }
+    .envlope-wrapper.fade-out {
+      opacity: 0 !important;
+      pointer-events: none;
+      filter: blur(14px);
+      transform: scale(0.98);
+    }
+    @keyframes blurFadeIn {
+      from { opacity: 0; filter: blur(22px); transform: scale(0.96);}
+      to { opacity: 1; filter: blur(0); transform: scale(1);}
+    }
+    html, body { height: 100%; }
+    body {
+      min-height: 100vh;
+      min-width: 100vw;
+      display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
+    }
+    #envelope {
+      position: relative;
+      z-index: 101;
+      width: 280px;
+      height: 165px;
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+      background-color: #f9c5c8;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      margin: 0 auto;
+      max-width: 98vw;
+      min-width: 180px;
+    }
+    .front { position: absolute; width: 0; height: 0; z-index: 3;}
+    .flap {
+      border-left: 140px solid transparent;
+      border-right: 140px solid transparent;
+      border-bottom: 82px solid transparent;
+      border-top: 98px solid #ff3333;
+      transform-origin: top;
+      pointer-events: none;
+    }
+    .pocket {
+      border-left: 140px solid #ff9999;
+      border-right: 140px solid #ff9999;
+      border-bottom: 90px solid #fd8787;
+      border-top: 90px solid transparent;
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+      pointer-events: none;
+    }
+    .letter {
+      position: relative;
+      background-color: #fff1e6;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      height: 150px;
+      top: 5%;
+      border-radius: 6px;
+      box-shadow: 0 2px 26px rgba(0, 0, 0, 0.12);
+      z-index: 1;
+      display: flex;
       flex-direction: column;
-      overflow: hidden;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 10px;
+      max-width: 95vw;
+      min-width: 100px;
+      overflow-y: auto;
+    }
+    .letter p {
+      font-family: 'Verdana', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #AD1457;
       text-align: center;
-      padding: 20px;
+      margin-bottom: 0px;
+      opacity: 1;
+      filter: blur(8px);
+      transition: filter 1.55s cubic-bezier(.4,0,.2,1) 0.7s;
     }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      color: #ff6f91;
-      text-shadow: none;
+    .open .letter p {
+      filter: blur(0);
+      transition: filter 1.55s cubic-bezier(.4,0,.2,1) 0.7s;
     }
-
-    p {
-      font-size: 1.4rem;
-      margin: 5px 0 20px 0;
-      color: #f0e9ff;
-      text-shadow: none;
-    }
-
-    #inicio button,
-    #convite button {
-      padding: 12px 30px;
-      font-size: 1.3rem;
+    .emoji-btn {
+      font-size: 28px;
+      background: none;
       border: none;
-      border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-      user-select: none;
-      white-space: nowrap;
-      transition: background-color 0.3s ease;
+      margin-top: 10px;
+      pointer-events: auto;
+      position: relative;
+      z-index: 10;
+      opacity: 0;
+      transform: scale(0.92);
+      transition: opacity 0.65s cubic-bezier(.4,0,.2,1), transform 0.5s cubic-bezier(.4,0,.2,1);
     }
-
-    #verBtn {
-      background-color: #ff4f81;
-      color: white;
+    .emoji-btn.emoji-fade-in {
+      opacity: 1;
+      transform: scale(1);
+      transition: opacity 0.65s cubic-bezier(.4,0,.2,1), transform 0.5s cubic-bezier(.4,0,.2,1);
     }
-    #verBtn:hover {
-      background-color: #e8436f;
+    .emoji-btn:hover { transform: scale(1.18);}
+    .emoji-btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+    .open .flap { transform: rotateX(180deg); transition: transform 0.4s ease, z-index 0.6s; z-index: 1;}
+    .close .flap { transform: rotateX(0deg); transition: transform 0.4s 0.6s ease, z-index 1s; z-index: 5;}
+    .close .letter { transform: translateY(0px); transition: transform 0.4s ease, z-index 1s; z-index: 1;}
+    .open .letter { transform: translateY(-60px); transition: transform 0.4s 0.6s ease, z-index 0.6s; z-index: 2;}
+    .hearts {
+      position: absolute;
+      top: 110px;
+      left: 0;
+      right: 0;
+      z-index: 2;
+      width: 100%;
+      height: 0;
+      pointer-events: none;
     }
-
-    #buttons {
+    .heart { position: absolute; bottom: 0; pointer-events: none; opacity: 1; }
+    .heart:before, .heart:after {
+      position: absolute;
+      content: "";
+      left: 50px;
+      top: 0;
+      width: 50px;
+      height: 80px;
+      background: #d00000;
+      border-radius: 50px 50px 0 0;
+      transform: rotate(-45deg);
+      transform-origin: 0 100%;
+      pointer-events: none;
+    }
+    .heart:after {
+      left: 0;
+      transform: rotate(45deg);
+      transform-origin: 100% 100%;
+    }
+    .close .heart { opacity: 0; -webkit-animation: none; animation: none; }
+    .a1  { left: 8%;  transform: scale(0.37) rotate(-9deg);  animation: heartUp1 3.1s cubic-bezier(.48,.13,.52,.86) 0.7s, swayH1 1.5s ease-in-out 0s infinite alternate; }
+    .a2  { left: 17%; transform: scale(0.43) rotate(-7deg);  animation: heartUp2 3.3s cubic-bezier(.38,.18,.64,.77) 1.1s, swayH2 1.8s ease-in-out 0.2s infinite alternate;}
+    .a3  { left: 25%; transform: scale(0.48) rotate(-3deg);  animation: heartUp3 2.7s cubic-bezier(.38,.35,.62,.75) 1.4s, swayH3 1.6s ease-in-out 0.3s infinite alternate;}
+    .a4  { left: 34%; transform: scale(0.54) rotate(-2deg);  animation: heartUp4 2.8s cubic-bezier(.48,.21,.64,.79) 0.8s, swayH4 1.7s ease-in-out 0.8s infinite alternate;}
+    .a5  { left: 46%; transform: scale(0.65) rotate(0deg);   animation: heartUp5 3.2s cubic-bezier(.34,.32,.72,.83) 1.9s, swayH5 1.8s ease-in-out 0.4s infinite alternate;}
+    .a6  { left: 56%; transform: scale(0.60) rotate(3deg);   animation: heartUp6 2.7s cubic-bezier(.41,.19,.63,.85) 1.5s, swayH6 1.5s ease-in-out 0.6s infinite alternate;}
+    .a7  { left: 65%; transform: scale(0.54) rotate(6deg);   animation: heartUp7 3.1s cubic-bezier(.4,.26,.66,.91) 0.9s, swayH7 1.7s ease-in-out 0.1s infinite alternate;}
+    .a8  { left: 73%; transform: scale(0.42) rotate(9deg);   animation: heartUp8 3.2s cubic-bezier(.44,.19,.81,.85) 2.1s, swayH8 1.9s ease-in-out 0.7s infinite alternate;}
+    .a9  { left: 81%; transform: scale(0.39) rotate(13deg);  animation: heartUp9 3.5s cubic-bezier(.35,.33,.77,.92) 1.8s, swayH9 2.1s ease-in-out 0.5s infinite alternate;}
+    @keyframes heartUp1 { 0% { top: 18px; opacity: 1;} 70% { opacity: 1;} 100% { top: -500px; opacity: 0;} }
+    @keyframes heartUp2 { 0% { top: 24px; opacity: 1;} 65% { opacity: 1;} 100% { top: -590px; opacity: 0;} }
+    @keyframes heartUp3 { 0% { top: 20px; opacity: 1;} 80% { opacity: 1;} 100% { top: -530px; opacity: 0;} }
+    @keyframes heartUp4 { 0% { top: 28px; opacity: 1;} 60% { opacity: 1;} 100% { top: -610px; opacity: 0;} }
+    @keyframes heartUp5 { 0% { top: 22px; opacity: 1;} 75% { opacity: 1;} 100% { top: -490px; opacity: 0;} }
+    @keyframes heartUp6 { 0% { top: 16px; opacity: 1;} 70% { opacity: 1;} 100% { top: -600px; opacity: 0;} }
+    @keyframes heartUp7 { 0% { top: 24px; opacity: 1;} 80% { opacity: 1;} 100% { top: -520px; opacity: 0;} }
+    @keyframes heartUp8 { 0% { top: 21px; opacity: 1;} 65% { opacity: 1;} 100% { top: -570px; opacity: 0;} }
+    @keyframes heartUp9 { 0% { top: 19px; opacity: 1;} 85% { opacity: 1;} 100% { top: -590px; opacity: 0;} }
+    @keyframes swayH1  { 0% { margin-left: 0px; } 100% { margin-left: 18px; } }
+    @keyframes swayH2  { 0% { margin-left: 0px; } 100% { margin-left: 35px; } }
+    @keyframes swayH3  { 0% { margin-left: 0px; } 100% { margin-left: -22px; } }
+    @keyframes swayH4  { 0% { margin-left: 0px; } 100% { margin-left: 40px; } }
+    @keyframes swayH5  { 0% { margin-left: 0px; } 100% { margin-left: -15px; } }
+    @keyframes swayH6  { 0% { margin-left: 0px; } 100% { margin-left: 24px; } }
+    @keyframes swayH7  { 0% { margin-left: 0px; } 100% { margin-left: -27px; } }
+    @keyframes swayH8  { 0% { margin-left: 0px; } 100% { margin-left: 13px; } }
+    @keyframes swayH9  { 0% { margin-left: 0px; } 100% { margin-left: -18px; } }
+    .reset {
+      text-align: center;
+      margin-top: 32px;
+      margin-bottom: 0;
+      transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1);
+      z-index: 10;
+      position: relative;
       display: flex;
       justify-content: center;
-      gap: 30px;
+      gap: 16px;
+      opacity: 0;
+      transform: scale(0.98);
+      flex-wrap: wrap;
+      pointer-events: none;
+    }
+    .reset.visible {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+      transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    .reset.fade-out { opacity: 0; pointer-events: none; transform: scale(0.98);}
+    .reset button {
+      padding: 10px 30px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      background-color: rgba(255, 255, 255, 0.85);
+      color: #333;
+      border: 2px solid #DDD;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      outline: none;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      margin: 0;
+    }
+    .reset button:hover {
+      background-color: #FFB3C1;
+      color: #fff;
+      border-color: #FF6B81;
+      box-shadow: 0 10px 15px rgba(255, 107, 129, 0.2);
+      transform: translateY(-4px);
+    }
+    .reset button:active {
+      background-color: #FF6B81;
+      color: #fff;
+      border-color: #FF4D66;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+      transform: translateY(1px);
+    }
+    .romantic-bg { background-color: #ffeeee !important; transition: background 0.4s;}
+    :root { --fundo: #fff8f5; --rosa-claro: #fb6f92; --rosa-medio: #fb6f92; --rosa-escuro: #ff758f;}
+    @font-face { font-family: Glitten; src: url(https://files.jcink.net/uploads/mischief/Glitten_Regular.otf);}
+    .romantic-container {
+      display: none;
+      max-width: 450px;
+      width: 100%;
+      border-radius: 15px;
+      text-align: center;
+      color: var(--rosa-escuro);
+      flex-direction: column;
+      gap: 20px;
       position: relative;
-      width: 320px;
-      margin-top: 15px;
+      user-select: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+      opacity: 0;
+      transform: scale(0.97);
+      transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1), left 0.8s cubic-bezier(.4,0,.2,1);
+      padding: 28px 12px 28px 12px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: unset !important;
+      height: auto !important;
+      z-index: 10;
+      left: 0;
     }
-
-    #yes {
-      background-color: #4caf50;
-      color: white;
-      min-width: 120px;
+    .romantic-container.active {
+      display: flex !important;
+      opacity: 1;
+      transform: scale(1);
+      animation: fadeInUp 0.7s cubic-bezier(.4,0,.2,1);
+      left: 0;
     }
-    #yes:hover {
-      background-color: #3a9d41;
+    .romantic-container.slide-out {
+      transition: left 0.8s cubic-bezier(.4,0,.2,1), opacity 0.7s, transform 0.7s;
+      left: -120vw;
+      opacity: 0;
+      pointer-events: none;
     }
-
-    #no {
-      background-color: #e53935;
-      color: white;
-      min-width: 120px;
-      position: fixed;
-      top: 50%;
+    .romantic-container.slide-in {
+      left: 0;
+      opacity: 1;
+      display: flex !important;
+      pointer-events: auto;
+      animation: fadeInUp 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    .romantic-container .initial-letter {
+      font-family: Glitten, serif;
+      font-size: 100px;
+      color: var(--rosa-medio);
+      line-height: 1;
+      margin: 0 auto 10px;
+      user-select: none;
+      text-shadow: 1px 1px 6px rgba(253, 135, 135, 0.3);
+      background: none;
+      border: none;
+      animation: floating-heart 2.4s ease-in-out infinite alternate;
+      max-width: 100vw;
+      word-break: break-word;
+    }
+    @keyframes floating-heart {
+      0%   { transform: scale(1) translateY(0px) rotate(-2deg);}
+      30%  { transform: scale(1.05) translateY(-7px) rotate(2deg);}
+      60%  { transform: scale(0.98) translateY(4px) rotate(-4deg);}
+      100% { transform: scale(1) translateY(0px) rotate(0deg);}
+    }
+    .titles { display: flex; flex-direction: column; gap: 6px;}
+    .title-small { font-size: 13px; text-transform: uppercase; color: var(--rosa-claro); letter-spacing: 1.2px; font-weight: 600; opacity: 0; animation: fadeSlideUp 0.8s ease forwards; animation-delay: 0.6s;}
+    .title-main { font-size: 28px; text-transform: uppercase; color: var(--rosa-medio); letter-spacing: 5px; font-weight: 700; margin-top: 5px; opacity: 0; animation: fadeSlideUp 0.8s ease forwards; animation-delay: 0.9s;}
+    .title-sub { font-size: 18px; font-style: italic; font-weight: 300; color: var(--rosa-escuro); letter-spacing: -0.5px; text-transform: lowercase; opacity: 0; animation: fadeSlideUp 0.8s ease forwards; animation-delay: 1.2s;}
+    .romantic-container .text-box {
+      background-color: transparent;
+      padding: 0px 12px;
+      border-radius: 12px;
+      font-family: 'Crimson Text', serif;
+      font-size: 15px;
+      line-height: 1.8;
+      text-align: center;
+      color: var(--rosa-escuro);
+      box-shadow: none;
+      min-height: 120px;
+      max-height: 220px;
+      height: 220px;
+      max-width: 390px;
+      width: 100%;
+      margin: 10px 0 16px 0;
+      white-space: pre-wrap;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards;
+      animation-delay: 1.4s;
+      user-select: none;
+      word-break: break-word;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      transition: none;
+    }
+    .romantic-container.active .text-box { opacity: 1;}
+    .btn-polaroid-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fb6f92 80%, #fff8f5 100%);
+      box-shadow: 0 2px 10px rgba(251, 111, 146, 0.14);
+      border: none;
+      cursor: pointer;
+      position: absolute;
       left: 50%;
-      transform: translate(-50%, -50%);
-      transition: none !important;
+      bottom: 36px;
+      transform: translateX(-50%);
+      z-index: 20;
+      transition: background 0.3s, box-shadow 0.3s;
+      outline: none;
+      border: 2.5px solid #fff8f5;
+      animation: pulse 2.5s infinite alternate;
     }
-
-    #msgFuga {
-      margin-top: 20px;
-      min-height: 24px;
-      font-size: 1rem;
-      color: #ffaaaa;
-      font-weight: bold;
-      font-family: 'Segoe UI Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-shadow: none;
+    .btn-polaroid-screen:hover {
+      background: linear-gradient(135deg, #fb6f92 95%, #ffb3c1 100%);
+      box-shadow: 0 4px 18px #fb6f9240;
     }
-
-    .despedida {
-      animation: girarDesaparecer 1.2s ease forwards;
+    .btn-polaroid-screen svg {
+      width: 32px;
+      height: 32px;
+      fill: #fff;
+      filter: drop-shadow(0 2px 4px #fb6f9250);
+      transition: transform 0.2s;
     }
-
-    @keyframes girarDesaparecer {
-      0% { transform: scale(1) rotate(0deg); opacity: 1; }
-      50% { transform: scale(1.2) rotate(180deg); }
-      100% { transform: scale(0) rotate(360deg); opacity: 0; }
+    .btn-polaroid-screen:active svg {
+      transform: scale(1.1) translateX(4px);
     }
-
-    /* Responsividade para telas pequenas */
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 2.2rem;
+    .footer { display: none !important; }
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(15px);} to { opacity: 1; transform: translateY(0);} }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
+    @keyframes pulse { 0% { box-shadow: 0 2px 10px rgba(251, 111, 146, 0.14);} 100% { box-shadow: 0 6px 18px #fb6f9240; } }
+    @media (max-width: 900px) {
+      .romantic-container {
+        max-width: 100vw;
+        padding: 19px 2vw;
+        border-radius: 10px;
+        margin: 0 auto !important;
       }
-
-      p {
-        font-size: 1.6rem;
+      .envlope-wrapper { width: 100vw; }
+      .btn-polaroid-screen { right: 0; }
+    }
+    @media (max-width: 600px) {
+      .romantic-container {
+        max-width: 100vw;
+        padding: 8px 0 8px 0;
+        border-radius: 0;
+        margin: 0 auto !important;
       }
-
-      #inicio button,
-      #convite button {
-        font-size: 1.5rem;
-        padding: 14px 28px;
+      .envlope-wrapper { width: 100vw; }
+      .btn-polaroid-screen { right: 0; }
+    }
+    @media (max-width: 400px) {
+      .romantic-container {
+        padding: 4px 0 8px 0;
+        margin: 0 auto !important;
       }
-
-      #buttons {
-        flex-direction: column;
-        gap: 20px;
-        width: 100%;
-      }
-
-      #yes, #no {
-        min-width: unset;
-        width: 100%;
-        padding: 16px 0;
-      }
-
-      #msgFuga {
-        font-size: 1.1rem;
-      }
-
-      body {
-        padding: 40px 25px;
-      }
+      .envlope-wrapper { width: 100vw; }
+      .btn-polaroid-screen { right: 0; }
+    }
+    #audioBtnWrapper { display: none !important; }
+    #timelineOverlay {
+      background-color: #ffeeee !important;
+      background-image: none !important;
+      position: fixed;
+      top: 0; left: 100vw;
+      width: 100vw; height: 100vh;
+      z-index: 20000;
+      overflow: hidden;
+      opacity: 0;
+      transition: left 0.7s cubic-bezier(.4,0,.2,1), opacity 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    #timelineOverlay.active {
+      left: 0;
+      opacity: 1;
+    }
+    /* --------- LINHA DO TEMPO ANIMADA -------- */
+    #wavepath {
+      stroke-dasharray: 0;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1.2s cubic-bezier(.6,0,.3,1);
+      opacity: 0;
+      transition-property: opacity, stroke-dashoffset;
+    }
+    #wavepath.visible {
+      opacity: 1;
+      transition: opacity 0.5s cubic-bezier(.4,0,.2,1), stroke-dashoffset 1.2s cubic-bezier(.6,0,.3,1);
+    }
+    #timelineOverlay .timeline-emoji {
+      opacity: 0;
+      transform: scale(0.75);
+      transition: opacity 0.35s cubic-bezier(.4,0,.2,1), transform 0.35s;
+    }
+    #timelineOverlay .timeline-emoji.visible {
+      opacity: 1;
+      transform: scale(1);
     }
   </style>
 </head>
 <body>
-
-  <div id="inicio">
-    <h1>Oi minha loirinha 💖</h1>
-    <p>Tenho um convite especial pra você...</p>
-    <button id="verBtn" onclick="mostrarConvite()">Ver convite 💌</button>
-  </div>
-
-  <div id="convite" style="display:none;">
-    <h1>Uma noite especial... 🌙</h1>
-    <p>Aceita jantar comigo? ❤️</p>
-
-    <div id="buttons">
-      <button id="yes" onclick="aceitou()">Sim 🥰</button>
-      <button id="no" onmouseenter="moveButton(event)">Não 😢</button>
+  <div class="envlope-wrapper" id="envelopeWrapper">
+    <div id="envelope" class="close">
+      <div class="front flap"></div>
+      <div class="front pocket"></div>
+      <div class="letter">
+        <p id="envelopePhrase">Nosso momento especial começa com um clique...</p>
+        <button class="emoji-btn" id="btnSurpresa" title="Clique para a surpresa" disabled>💌</button>
+      </div>
+      <div class="hearts">
+        <div class="heart a1"></div>
+        <div class="heart a2"></div>
+        <div class="heart a3"></div>
+        <div class="heart a4"></div>
+        <div class="heart a5"></div>
+        <div class="heart a6"></div>
+        <div class="heart a7"></div>
+        <div class="heart a8"></div>
+        <div class="heart a9"></div>
+      </div>
     </div>
-
-    <div id="msgFuga"></div>
+    <div class="reset" id="resetBtns">
+      <button id="open">ABRIR</button>
+      <button id="reset">FECHAR</button>
+    </div>
+  </div>
+  <div class="romantic-container" id="romanticScreen" aria-label="Mensagem romântica">
+    <div class="initial-letter">❤</div>
+    <div class="titles">
+      <div class="title-small">E aí, minha loirinha...</div>
+      <div class="title-main">10 meses de nós</div>
+    </div>
+    <div class="text-box" id="typedText" aria-live="polite" aria-atomic="true"></div>
+    <button class="btn-polaroid-screen" id="goToPolaroidScreen" aria-label="Ver fotos">
+      <svg viewBox="0 0 40 40">
+        <circle cx="20" cy="20" r="19" fill="none"/>
+        <polyline points="15,10 25,20 15,30" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </div>
 
-  <audio autoplay loop>
-    <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg" />
-    Seu navegador não suporta áudio.
-  </audio>
-
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-  <script>
-    const noBtn = document.getElementById('no');
-    const yesBtn = document.getElementById('yes');
-    const msgFuga = document.getElementById('msgFuga');
-    const conviteDiv = document.getElementById('convite');
-    const inicioDiv = document.getElementById('inicio');
-
-    let tentativas = 0;
-    const frases = [
-      "Julinha, Julinha...",
-      "Tem certeza? 😜",
-      "Ah não, pensa bem! 😅",
-      "Só um pouquinho? 😉",
-      "Vai que é tua! 😘"
-    ];
-
-    function mostrarConvite() {
-      inicioDiv.style.display = 'none';
-      conviteDiv.style.display = 'block';
-    }
-
-    function aceitou() {
-      conviteDiv.innerHTML = `
-        <h1>Você aceitou! 🥳</h1>
-        <p>Mal posso esperar por essa noite especial com você ❤️</p>
-      `;
-      confetti({
-        particleCount: 200,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-    }
-
-    function moveButton(event) {
-      tentativas++;
-      if (tentativas <= frases.length) {
-        msgFuga.textContent = frases[tentativas - 1];
-      } else {
-        msgFuga.textContent = "Você não pode recusar! 😜";
+  <!-- LINHA DO TEMPO DO AMOR - substitui a polaroid overlay -->
+  <div id="timelineOverlay">
+    <button id="goBackToRomanticScreen" class="btn-polaroid-screen" style="position: absolute; left: 50%; bottom: 36px; transform: translateX(-50%) rotate(180deg); z-index: 30000;">
+      <svg viewBox="0 0 40 40">
+        <circle cx="20" cy="20" r="19" fill="none"/>
+        <polyline points="15,10 25,20 15,30" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div id="timelineContent">
+      <h1>Linha do Tempo do Amor</h1>
+      <div class="timer-container">
+        <span class="timer-juntos" id="timerJuntos">
+          Estamos juntos há <span id="timerValor">0 meses, 0 dias, 00:00:00 horas/min/seg</span> 💖
+        </span>
+      </div>
+      <div class="wave-timeline-scroll" id="timelineScroll" style="min-height:210px;">
+        <div class="wave-timeline-inner" id="waveTimeline" style="min-height:210px;">
+          <svg class="wave-timeline-svg" id="wavesvg">
+            <path id="wavepath" fill="none" stroke="#fad0c4" stroke-width="10" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <style>
+      /* (todo o CSS interno igual ao anterior) */
+      #timelineOverlay h1 { margin-top: 36px; margin-bottom: 0; font-size: 2.2rem; color: #b8336a; letter-spacing: 2px; font-weight: 700; text-align: center; text-shadow: 0 2px 16px #fff3; z-index: 10; user-select: none; }
+      #timelineOverlay .timer-container { text-align: center; width: auto; margin: 0 auto; position: relative; z-index: 1; background: none; }
+      #timelineOverlay .timer-juntos { margin-top: 8px; margin-bottom: 18px; text-align: center; font-size: 1.18rem; font-weight: 600; color: #e23e57; letter-spacing: 1px; background: #fff7; display: inline-block; width: auto; padding: 7px 18px 8px 18px; border-radius: 18px; box-shadow: 0 2px 16px #fad0c433; user-select: none; position: relative; z-index: 2; pointer-events: auto; }
+      #timelineOverlay .wave-timeline-scroll { width: 100vw; min-height: 210px; height: 530px; position: relative; overflow-x: auto; overflow-y: hidden; margin: 0 auto; scrollbar-width: none; -ms-overflow-style: none; cursor: grab; background: none; }
+      #timelineOverlay .wave-timeline-scroll:active { cursor: grabbing; }
+      #timelineOverlay .wave-timeline-scroll::-webkit-scrollbar { display: none; }
+      #timelineOverlay .wave-timeline-inner { position: relative; z-index: 3000; min-height: 210px; height: 530px; min-width: 100vw; overflow: visible; will-change: transform; }
+      #timelineOverlay .wave-timeline-svg { position: absolute; top: 0; left: 0; min-height: 210px; height: 530px; pointer-events: none; overflow: visible; display: block; z-index: 0; background: none; }
+      #timelineOverlay .timeline-emoji { position: absolute; width: 54px; height: 54px; margin: -27px 0 0 -27px; display: flex; align-items: center; justify-content: center; font-size: 2.22rem; transition: transform 0.15s, box-shadow 0.15s; z-index: 1001; box-shadow: 0 2px 12px #fad0c433; background: #fff6fa; border-radius: 50%; border: 2.2px solid #fad0c4; outline: none; pointer-events: auto; user-select: none; opacity: 0; transform: scale(0.75);}
+      #timelineOverlay .timeline-emoji.visible { opacity: 1; transform: scale(1);}
+      #timelineOverlay .timeline-emoji:focus { outline: none; }
+      #timelineOverlay .timeline-emoji:focus, #timelineOverlay .timeline-emoji:hover { transform: scale(1.15) rotate(-3deg); z-index: 1003; box-shadow: 0 4px 18px #b8336a44; border-color: #e23e57; }
+      #timelineOverlay .emoji-tooltip { display: none; position: absolute; left: 50%; background: #fff6fa; color: #b8336a; padding: 6px 8px 8px 8px; border-radius: 8px; font-size: .89rem; min-width: 60px; max-width: 170px; box-shadow: 0 4px 10px #fad0c433; border: 1.5px solid #fad0c4; font-weight: 700; pointer-events: none; z-index: 4000 !important; text-align: center; opacity: 0; transition: opacity .13s; will-change: opacity; white-space: normal; word-break: break-word; transform: translateX(-50%);}
+      #timelineOverlay .timeline-emoji:hover .emoji-tooltip { display: block; opacity: 1; animation: fadeInTooltip .13s; pointer-events: auto; }
+      #timelineOverlay .tooltip-up { bottom: 60px; top: auto; }
+      #timelineOverlay .tooltip-down { top: 60px; bottom: auto; }
+      #timelineOverlay .tooltip-left { left: 100% !important; right: auto; top: 50% !important; bottom: auto !important; transform: translateY(-50%) !important; }
+      #timelineOverlay .tooltip-right { left: auto !important; right: 100%; top: 50% !important; bottom: auto !important; transform: translateY(-50%) !important;}
+      #timelineOverlay .emoji-tooltip-img { display: block; width: 90px; height: 107px; object-fit: cover; border-radius: 4px; box-shadow: 0 2px 6px #fad0c433; margin: 0 auto 3px auto; border: 1px solid #fad0c4; background: #fff; max-width: 90vw; transition: width 0.14s, height 0.14s; pointer-events: none; }
+      @keyframes fadeInTooltip { from { opacity: 0; transform: translateX(-50%) scale(.98);} to   { opacity: 1; transform: translateX(-50%) scale(1);} }
+      @media (max-width: 900px) {
+        #timelineOverlay .wave-timeline-scroll, #timelineOverlay .wave-timeline-inner, #timelineOverlay .wave-timeline-svg { min-height: 210px !important; height: 210px !important; }
+        #timelineOverlay .timeline-emoji { width: 32px; height: 32px; font-size: 1.25rem; margin: -16px 0 0 -16px;}
+        #timelineOverlay .emoji-tooltip { min-width: 28px; max-width: 80vw; font-size: .64rem; padding: 2px 3px 3px 3px;}
+        #timelineOverlay .emoji-tooltip-img { width: 40px; height: 20px; border-radius: 2px; margin-bottom: 2px; }
+        #timelineOverlay .tooltip-up { bottom: 28px; top: auto; }
+        #timelineOverlay .tooltip-down { top: 28px; bottom: auto; }
+        #timelineOverlay .tooltip-left, #timelineOverlay .tooltip-right { top: 50% !important; transform: translateY(-50%) !important;}
+        #timelineOverlay .timer-juntos { font-size: .89rem; padding: 5px 10px 5px 10px; }
       }
+      @media (max-width: 600px) {
+        #timelineOverlay .wave-timeline-scroll, #timelineOverlay .wave-timeline-inner, #timelineOverlay .wave-timeline-svg { min-height: 120px !important; height: 120px !important; }
+      }
+    </style>
+  </div>
+  <script>
+    // ... demais funções envelope e typewriter continuam IGUAIS ...
+    // ... até a função renderTimeline, que agora faz a linha aparecer emoji por emoji ...
+    // ... restaure as funções de antes, mas troque o trecho da animação da linha por este: ...
 
-      // Move o botão "Não" para uma posição aleatória dentro da viewport
-      const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-      const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-      noBtn.style.left = x + 'px';
-      noBtn.style.top = y + 'px';
+    // ---- ENVELOPE E ROMANTIC ----
+    document.addEventListener("contextmenu", function(e) { e.preventDefault(); });
+    document.addEventListener("copy", function(e) { e.preventDefault(); });
+    document.addEventListener("cut", function(e) { e.preventDefault(); });
+    document.addEventListener("paste", function(e) { e.preventDefault(); });
+    document.addEventListener("selectstart", function(e) { e.preventDefault(); });
+
+    const envelope = document.getElementById('envelope');
+    const btnOpen = document.getElementById('open');
+    const btnReset = document.getElementById('reset');
+    const btnSurpresa = document.getElementById('btnSurpresa');
+    const envelopeWrapper = document.getElementById('envelopeWrapper');
+    const resetBtns = document.getElementById('resetBtns');
+
+    function showEmojiBtnFadeIn() {
+      btnSurpresa.classList.remove('emoji-fade-in');
+      setTimeout(() => {
+        btnSurpresa.classList.add('emoji-fade-in');
+      }, 1550 + 700);
     }
+    window.addEventListener('DOMContentLoaded', () => {
+      resetBtns.classList.remove('visible');
+      setTimeout(() => {
+        envelopeWrapper.classList.add('initial-entry');
+        setTimeout(() => {
+          resetBtns.classList.add('visible');
+        }, 900 + 400);
+      }, 180);
+      btnSurpresa.classList.remove('emoji-fade-in');
+    });
+    function updateBtnSurpresa() { btnSurpresa.disabled = !envelope.classList.contains('open'); }
+    function openEnvelope() {
+      envelope.classList.add('open');
+      envelope.classList.remove('close');
+      updateBtnSurpresa();
+      btnSurpresa.classList.remove('emoji-fade-in');
+      showEmojiBtnFadeIn();
+    }
+    function closeEnvelope() {
+      envelope.classList.add('close');
+      envelope.classList.remove('open');
+      updateBtnSurpresa();
+      btnSurpresa.classList.remove('emoji-fade-in');
+    }
+    btnOpen.addEventListener('click', openEnvelope);
+    btnReset.addEventListener('click', closeEnvelope);
+    updateBtnSurpresa();
+
+    // TELA 2
+    const romanticScreen = document.getElementById('romanticScreen');
+    const textContent = `Entre lembranças doces e nossos momentos mais bobos, esse espaço é só pra te lembrar do quanto você é especial pra mim. Cada linha aqui carrega um pouquinho do que sinto, mesmo quando não sei explicar direito. Com amor, com verdade, com você no pensamento.`;
+    const typedTextEl = document.getElementById('typedText');
+    let index = 0;
+    function typeWriter() {
+      if (index < textContent.length) {
+        typedTextEl.textContent += textContent.charAt(index);
+        index++;
+        setTimeout(typeWriter, 35);
+      }
+    }
+    function resetTypeWriter() { typedTextEl.textContent = ""; index = 0;}
+    btnSurpresa.addEventListener('click', () => {
+      envelopeWrapper.classList.add('fade-out');
+      resetBtns.classList.add('fade-out');
+      setTimeout(() => {
+        document.body.classList.add("no-scroll");
+        document.documentElement.classList.add("no-scroll");
+        document.body.classList.add("romantic-bg");
+        envelopeWrapper.style.display = 'none';
+        resetBtns.style.display = 'none';
+        romanticScreen.classList.add('active');
+        resetTypeWriter();
+        setTimeout(typeWriter, 700);
+      }, 700);
+    });
+
+    // ---- LINHA DO TEMPO DO AMOR ----
+    const goToPolaroidScreenBtn = document.getElementById('goToPolaroidScreen');
+    const timelineOverlay = document.getElementById('timelineOverlay');
+    const goBackToRomanticScreenBtn = document.getElementById('goBackToRomanticScreen');
+
+    function renderTimeline() {
+      // TIMER igual antes ...
+      const dataInicio = new Date("2024-08-04T00:00:00");
+      function atualizaTimer() {
+        const timerSpan = document.getElementById('timerValor');
+        const agora = new Date();
+        let anos = agora.getFullYear() - dataInicio.getFullYear();
+        let meses = agora.getMonth() - dataInicio.getMonth() + anos * 12;
+        let dias = agora.getDate() - dataInicio.getDate();
+        let horas = agora.getHours() - dataInicio.getHours();
+        let minutos = agora.getMinutes() - dataInicio.getMinutes();
+        let segundos = agora.getSeconds() - dataInicio.getSeconds();
+        if (segundos < 0) { segundos += 60; minutos--; }
+        if (minutos < 0) { minutos += 60; horas--; }
+        if (horas < 0) { horas += 24; dias--; }
+        if (dias < 0) { const dataCopia = new Date(agora.getFullYear(), agora.getMonth(), 0); dias += dataCopia.getDate(); meses--; }
+        if (meses < 0) { meses += 12; }
+        timerSpan.textContent = `${meses} meses, ${dias} dias, ${horas.toString().padStart(2,'0')}:${minutos.toString().padStart(2,'0')}:${segundos.toString().padStart(2,'0')} horas/min/seg`;
+      }
+      atualizaTimer();
+      if(window._timerInterval) clearInterval(window._timerInterval);
+      window._timerInterval = setInterval(atualizaTimer, 1000);
+
+      // LINHA DO TEMPO
+      const SAFE_MARGIN = 150;
+      const timelinePoints = [
+        { emoji: "📷", desc: "Primeira foto juntos", img: "https://i.imgur.com/hOHpChG.jpeg" },
+        { emoji: "🍽️", desc: "Jantar romântico", img: "https://i.imgur.com/fOJ5yIL.jpeg" },
+        { emoji: "🎂", desc: "Meu aniversário", img: "https://i.imgur.com/5bY7fyk.jpeg" },
+        { emoji: "💍", desc: "Pedido de namoro", img: "https://i.imgur.com/2ogHFaP.jpeg" },
+        { emoji: "🛵", desc: "Rolê juntos", img: "https://i.imgur.com/0KfqmE3.jpeg" },
+        { emoji: "🎫", desc: "Moana", img: "https://i.imgur.com/F1gZEsH.jpeg" },
+        { emoji: "🧳", desc: "Primeira viagem", img: "https://i.imgur.com/xsco4CX.jpeg" },
+        { emoji: "🤣", desc: "Dia inesquecível", img: "https://i.imgur.com/MYpzkob.jpeg" },
+        { emoji: "❤️‍🔥", desc: "Noivamos", img: "https://i.imgur.com/xkk1cVm.jpeg" },
+        { emoji: "😍", desc: "Dia dos namorados", img: "https://i.imgur.com/qOsYlnu.jpeg" }
+      ];
+      const container = document.getElementById('waveTimeline');
+      const svg = document.getElementById('wavesvg');
+      const path = document.getElementById('wavepath');
+      // Responsividade
+      let height, minH = 120, maxH = 530;
+      if(window.innerWidth <= 600) height = minH;
+      else if(window.innerWidth <= 900) height = 210;
+      else height = maxH;
+      const width = Math.max(window.innerWidth, 1600, timelinePoints.length * 250);
+      svg.setAttribute('width', width);
+      svg.setAttribute('height', height);
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      path.setAttribute('d', `M0,${height*0.58} Q${width*0.25},${height*0.27} ${width*0.5},${height*0.58-12} T${width},${height*0.58-32}`);
+      container.style.width = width + "px";
+      container.style.height = height + "px";
+      svg.style.width = width + "px";
+      svg.style.height = height + "px";
+
+      // Aguarda o path ser atualizado para garantir comprimento correto
+      setTimeout(() => {
+        // POSICIONAMENTO DOS EMOJIS e cálculo do comprimento da linha
+        const pathElem = path;
+        const len = pathElem.getTotalLength();
+        const emojiPoints = [];
+        let html = '';
+        timelinePoints.forEach((point, idx) => {
+          const percent = (idx+1)/(timelinePoints.length+1);
+          const pt = pathElem.getPointAtLength(len * percent);
+          emojiPoints.push(len * percent);
+          const tooltipDirection = idx % 2 === 0 ? "tooltip-up" : "tooltip-down";
+          html += `
+            <div class="timeline-emoji" style="left:${pt.x}px;top:${pt.y}px;" aria-label="${point.desc}">
+              <span>${point.emoji}</span>
+              <span class="emoji-tooltip ${tooltipDirection}">
+                <img src="${point.img}" class="emoji-tooltip-img" alt="${point.desc}">
+                ${point.desc}
+              </span>
+            </div>
+          `;
+        });
+        container.querySelectorAll('.timeline-emoji').forEach(e => e.remove());
+        container.insertAdjacentHTML('beforeend', html);
+        setSmartTooltipEvents();
+
+        // SCROLL DRAG igual antes
+        enableHorizontalDragScroll();
+
+        // ANIMAÇÃO DA LINHA E EMOJIS
+        setTimeout(() => {
+          animateLineStepByStep(path, emojiPoints, () => {
+            // nada extra ao final
+          });
+        }, 250);
+
+        // NÃO EXISTE MAIS O SCROLL ANIMADO DE IR E VOLTAR!
+        // setTimeout(animateTimelineScroll, 10);
+      }, 10); // tempo mínimo para o path ser atualizado
+
+      function setSmartTooltipEvents() {
+        document.querySelectorAll('.timeline-emoji').forEach(btn => {
+          const tooltip = btn.querySelector('.emoji-tooltip');
+          if (!tooltip) return;
+          function adjustTooltip() {
+            tooltip.classList.remove('tooltip-up', 'tooltip-down', 'tooltip-left', 'tooltip-right');
+            const isEven = Array.from(btn.parentNode.children).indexOf(btn) % 2 === 0;
+            tooltip.classList.add(isEven ? 'tooltip-up' : 'tooltip-down');
+            tooltip.style.visibility = 'hidden';
+            tooltip.style.display = 'block';
+            tooltip.style.left = '50%';
+            tooltip.style.right = '';
+            tooltip.style.top = '';
+            tooltip.style.bottom = '';
+            tooltip.style.transform = 'translateX(-50%)';
+            let tipRect = tooltip.getBoundingClientRect();
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            if (tipRect.bottom > vh - SAFE_MARGIN) { tooltip.classList.remove('tooltip-down'); tooltip.classList.add('tooltip-up'); }
+            tipRect = tooltip.getBoundingClientRect();
+            if (tipRect.top < SAFE_MARGIN) { tooltip.classList.remove('tooltip-up'); tooltip.classList.add('tooltip-down'); }
+            tipRect = tooltip.getBoundingClientRect();
+            if (tipRect.left < 8) {
+              tooltip.classList.add('tooltip-left'); tooltip.classList.remove('tooltip-up', 'tooltip-down', 'tooltip-right');
+              tooltip.style.left = '100%'; tooltip.style.right = 'auto'; tooltip.style.top = '50%'; tooltip.style.bottom = 'auto'; tooltip.style.transform = 'translateY(-50%)';
+            }
+            else if (tipRect.right > vw - 8) {
+              tooltip.classList.add('tooltip-right'); tooltip.classList.remove('tooltip-up', 'tooltip-down', 'tooltip-left');
+              tooltip.style.left = 'auto'; tooltip.style.right = '100%'; tooltip.style.top = '50%'; tooltip.style.bottom = 'auto'; tooltip.style.transform = 'translateY(-50%)';
+            }
+            else { tooltip.classList.remove('tooltip-left', 'tooltip-right'); tooltip.style.left = '50%'; tooltip.style.right = ''; tooltip.style.top = ''; tooltip.style.bottom = ''; tooltip.style.transform = 'translateX(-50%)'; }
+            tooltip.style.visibility = ''; tooltip.style.display = '';
+          }
+          btn.addEventListener('mouseenter', adjustTooltip);
+          btn.addEventListener('mouseleave', () => { tooltip.classList.remove('tooltip-left', 'tooltip-right'); });
+        });
+      }
+      // SCROLL DRAG igual antes
+      function enableHorizontalDragScroll() {
+        const scroll = document.getElementById('timelineScroll');
+        let isDown = false, startX, scrollLeft;
+        scroll.addEventListener('mousedown', (e) => {
+          isDown = true;
+          scroll.classList.add('active');
+          startX = e.pageX - scroll.offsetLeft;
+          scrollLeft = scroll.scrollLeft;
+        });
+        scroll.addEventListener('mouseleave', () => { isDown = false; });
+        scroll.addEventListener('mouseup', () => { isDown = false; });
+        scroll.addEventListener('mousemove', (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+          const x = e.pageX - scroll.offsetLeft;
+          const walk = (x - startX) * 1.3;
+          scroll.scrollLeft = scrollLeft - walk;
+        });
+        let isTouching = false, touchStartX, touchScrollLeft;
+        scroll.addEventListener('touchstart', (e) => {
+          isTouching = true;
+          touchStartX = e.touches[0].pageX;
+          touchScrollLeft = scroll.scrollLeft;
+        }, {passive:true});
+        scroll.addEventListener('touchmove', (e) => {
+          if (!isTouching) return;
+          const x = e.touches[0].pageX;
+          const walk = (x - touchStartX) * 1.3;
+          scroll.scrollLeft = touchScrollLeft - walk;
+        }, {passive:true});
+        scroll.addEventListener('touchend', () => { isTouching = false; });
+      }
+      // ANIMAÇÃO DA LINHA E EMOJIS
+      function animateLineStepByStep(path, emojiPoints, callback) {
+        if (!path) return;
+        const emojis = Array.from(document.querySelectorAll('#waveTimeline .timeline-emoji'));
+        // Reset tudo
+        path.style.strokeDasharray = path.getTotalLength();
+        path.style.strokeDashoffset = path.getTotalLength();
+        path.style.opacity = 1;
+        path.classList.add('visible');
+        emojis.forEach(e=>e.classList.remove('visible'));
+        // Função recursiva para cada etapa
+        function showStep(i) {
+          if (i >= emojiPoints.length) { if(callback) callback(); return; }
+          // O quanto da linha mostrar até esse emoji
+          const offset = path.getTotalLength() - emojiPoints[i];
+          path.style.transition = 'stroke-dashoffset 0.5s cubic-bezier(.7,0,.3,1)';
+          setTimeout(() => {
+            path.style.strokeDashoffset = offset;
+            setTimeout(() => {
+              emojis[i].classList.add('visible');
+              showStep(i+1);
+            }, 350); // emoji aparece após a linha chegar
+          }, 150);
+        }
+        // Começa do 0
+        showStep(0);
+      }
+      // --- AQUI FOI REMOVIDA a função animateTimelineScroll ---
+    }
+    goToPolaroidScreenBtn.addEventListener('click', () => {
+      romanticScreen.classList.add('slide-out');
+      timelineOverlay.style.display = 'block';
+      renderTimeline();
+      setTimeout(() => {
+        timelineOverlay.classList.add('active');
+        setTimeout(() => {
+          romanticScreen.style.display = 'none';
+        }, 700);
+      }, 100);
+    });
+    goBackToRomanticScreenBtn.addEventListener('click', () => {
+      timelineOverlay.classList.remove('active');
+      setTimeout(() => {
+        timelineOverlay.style.display = 'none';
+        romanticScreen.style.display = 'flex';
+        romanticScreen.classList.remove('slide-out');
+        romanticScreen.classList.add('slide-in');
+        setTimeout(() => {
+          romanticScreen.classList.remove('slide-in');
+        }, 800);
+        setTimeout(() => {
+          const path = document.getElementById('wavepath');
+          if (path) {
+            path.classList.remove('visible');
+            const length = path.getTotalLength();
+            path.style.strokeDasharray = length;
+            path.style.strokeDashoffset = length;
+            path.style.opacity = 0;
+          }
+          const emojis = document.querySelectorAll('#waveTimeline .timeline-emoji');
+          emojis.forEach((el) => {
+            el.classList.remove('visible');
+          });
+        }, 800);
+      }, 700);
+    });
+    const observer = new MutationObserver(() => updateBtnSurpresa());
+    observer.observe(envelope, { attributes: true, attributeFilter: ['class'] });
+    window.addEventListener('resize', function() {
+      if(timelineOverlay.style.display === 'block') {
+        renderTimeline();
+      }
+    });
   </script>
 </body>
 </html>
